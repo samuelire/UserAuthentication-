@@ -1,33 +1,19 @@
-// const mongoose = require('mongoose');
+// CHANGE: Use ES Modules instead of CommonJS
+import mongoose from "mongoose";
 
-// const Schema = mongoose.Schema;
+// CHANGE: Use environment variable for MongoDB URI
+// Fallback to local MongoDB for development
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/Login-reg";
 
-// const UserSchema = new Schema({
-//   Name: {
-//     type: String,
-//     required: true,
-//     unique: true
-//   },
-//   password: {
-//     type: String,
-//     required: true
-//   }
-// });
-
-// const UserModel = mongoose.model('user', UserSchema);
-
-// module.exports = UserModel;
-
-const mongoose = require("mongoose");
-const connect = mongoose.connect("mongodb://localhost:27017/Login-reg");
-
-connect.then(()=> {
-  console.log("Dataase connected Successfully");
+// CHANGE: Connect to MongoDB
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
-.catch(() => {
-  console.log("Database cannot be connected");
-});
+.then(() => console.log("Database connected successfully")) // CHANGE: improved log
+.catch((err) => console.log("Database connection failed", err)); // CHANGE: log error details
 
+// CHANGE: Define schema
 const LoginSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -38,6 +24,9 @@ const LoginSchema = new mongoose.Schema({
     required: true
   }
 });
-const collection = new mongoose.model("Users", LoginSchema);
 
-module.exports = collection;
+// CHANGE: Create model
+const Users = mongoose.model("Users", LoginSchema);
+
+// CHANGE: Export model using ES Module syntax
+export default Users;
